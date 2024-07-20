@@ -1,7 +1,19 @@
 import requests
 import csv
 from datetime import datetime, timedelta
-from services.serch_code import get_stock_codes
+
+# 각 데이터 조회 가능한 시작일자
+START_DATE_MKTCAP = "19950502"
+START_DATE_FORN_HD_QTY = "20051003"
+START_DATE_SHORT_SELLING = "20160630"
+
+
+def adjust_start_date(strtDd, available_start_date):
+    start_date = datetime.strptime(strtDd, "%Y%m%d")
+    available_start = datetime.strptime(available_start_date, "%Y%m%d")
+    if start_date < available_start:
+        start_date = available_start
+    return start_date
 
 
 def get_mktcap_data(strtDd, endDd, stock_name, full_code, short_code):
@@ -12,7 +24,7 @@ def get_mktcap_data(strtDd, endDd, stock_name, full_code, short_code):
         "Referer": "http://data.krx.co.kr/contents/MDC/MAIN/main/index.cmd",
     }
 
-    start_date = datetime.strptime(strtDd, "%Y%m%d")
+    start_date = adjust_start_date(strtDd, START_DATE_MKTCAP)
     end_date = datetime.strptime(endDd, "%Y%m%d")
 
     current_start_date = start_date
@@ -78,7 +90,7 @@ def get_FORN_HD_QTY(
         "Referer": "http://data.krx.co.kr/contents/MDC/MAIN/main/index.cmd",
     }
 
-    start_date = datetime.strptime(strtDd, "%Y%m%d")
+    start_date = adjust_start_date(strtDd, START_DATE_FORN_HD_QTY)
     end_date = datetime.strptime(endDd, "%Y%m%d")
 
     current_start_date = start_date
@@ -142,9 +154,11 @@ def get_short_selling_data(
         "Referer": "http://data.krx.co.kr/contents/MDC/MAIN/main/index.cmd",
     }
 
-    current_start_date = datetime.strptime(strtDd, "%Y%m%d")
+    start_date = adjust_start_date(strtDd, START_DATE_SHORT_SELLING)
     end_date = datetime.strptime(endDd, "%Y%m%d")
     short_selling_data = {}
+
+    current_start_date = start_date
 
     while current_start_date <= end_date:
         current_end_date = current_start_date + timedelta(days=364)

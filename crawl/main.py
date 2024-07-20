@@ -11,8 +11,12 @@ today = datetime.now()
 
 yesterday = today - timedelta(1)
 
-strtDd = "20230719"  # 상장일
+strtDd = "19750101"  # 상장일
 endDd = yesterday.strftime("%Y%m%d")
+
+# 공매도 시작일자 "20160630"
+# 외국인 보유수량 "20051003"
+# 시총 "19950502"
 
 
 def get_data(strtDd, endDd, stock_name):
