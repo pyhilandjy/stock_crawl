@@ -1,9 +1,10 @@
 import sys
+import csv
 
-sys.path.append("/Users/choi-junyong/local/dhkim")
+sys.path.append("/src")
 import requests
 from crawl.db.worker import execute_select_query, execute_insert_update_query
-from crawl.db.query import SELECT_STOCK_CODE, INSERT_STOCK_CODE
+from crawl.db.query import SELECT_STOCK_CODE, INSERT_STOCK_CODE, SELECT_ISSUE_DATE
 
 
 def get_stock_fullcodes(stock_name):
@@ -72,3 +73,17 @@ def post_stock_data(metadata: dict):
 
     # INSERT 쿼리 실행
     execute_insert_update_query(query=INSERT_STOCK_CODE, params=metadata)
+
+
+def get_issue_date_from_db():
+    with open("error_records.csv", mode="r", newline="", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            stock_name = row["stock_name"]
+            issue_date = get_issue_date_from_db(stock_name)
+            if issue_date:
+                print(f"Issue date for {stock_name}: {issue_date}")
+            else:
+                print(f"No issue date found for {stock_name}")
+    metadata = execute_select_query(query=SELECT_ISSUE_DATE, params=stock_name)
+    return metadata

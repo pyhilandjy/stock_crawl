@@ -15,3 +15,9 @@ INSERT INTO daily_stock_price_test (business_date, stock_code, market_cap, forei
 VALUES (:business_date, :stock_code, :market_cap, :foreign_accumulated_net_buy);
 """
 )
+
+SELECT_ISSUE_DATE = text(
+    """
+SELECT issue_date FROM stock_info WHERE stock_name = :stock_name
+"""
+)

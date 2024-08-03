@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("/Users/choi-junyong/local/dhkim")
+sys.path.append("/src")
 from sqlalchemy import text
 from crawl.db.connection import postgresql_connection
 

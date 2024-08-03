@@ -1,4 +1,5 @@
 import csv
+from errorr import open_stock_issue_dates_csv
 from services.request_data import (
     get_mktcap_data,
     get_FORN_HD_QTY,
@@ -7,7 +8,7 @@ from services.serch_code import get_stock_fullcodes, get_stock_code, post_stock_
 from datetime import datetime, timedelta
 import sys
 
-sys.path.append("/Users/choi-junyong/local/dhkim")
+sys.path.append("/src")
 today = datetime.now()
 yesterday = today - timedelta(1)
 endDd = yesterday.strftime("%Y%m%d")
@@ -34,23 +35,37 @@ def get_data(strtDd, endDd, stock_name):
 
 
 def main():
-    stock_info = get_stock_code()
+    # stock_info = get_stock_code()
+    stock_info = open_stock_issue_dates_csv()
     error_records = []
 
     for i in range(len(stock_info)):
-        result = get_data(stock_info[i].issue_date, endDd, stock_info[i].stock_name)
+        print(i)
+        result = get_data(
+            stock_info[i]["issue_date"], endDd, stock_info[i]["stock_name"]
+        )
         if result is None:
             error_records.append(
-                {"stock_name": stock_info[i].stock_name, "error_type": "not_code"}
+                {
+                    "stock_name": stock_info[i]["stock_name"],
+                    "issue_date": stock_info[i]["issue_date"],
+                    "error_type": "not_code",
+                }
             )
         elif result == "error":
             error_records.append(
-                {"stock_name": stock_info[i].stock_name, "error_type": "error"}
+                {
+                    "stock_name": stock_info[i]["stock_name"],
+                    "issue_date": stock_info[i]["issue_date"],
+                    "error_type": "error",
+                }
             )
 
     # 오류가 발생한 주식 이름을 CSV 파일에 기록
     with open("error_records.csv", mode="w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=["stock_name", "error_type"])
+        writer = csv.DictWriter(
+            file, fieldnames=["stock_name", "issue_date", "error_type"]
+        )
         writer.writeheader()
         for record in error_records:
             writer.writerow(record)
